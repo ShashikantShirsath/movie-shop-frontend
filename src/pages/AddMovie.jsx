@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { addMovie } from "../apis/movies";
 import { TextField, Button, Container, Typography } from "@mui/material";
+import toast from "react-hot-toast";
 
 export default function AddMovie() {
   const [movie, setMovie] = useState({
@@ -15,39 +16,16 @@ export default function AddMovie() {
   const change = (e) =>
     setMovie({ ...movie, [e.target.name]: e.target.value });
 
-  const validate = () => {
-    const newErrors = {};
-
-    if (!movie.title.trim()) {
-      newErrors.title = "Title is required";
-    } else if (movie.title.length < 2) {
-      newErrors.title = "Title must be at least 2 characters";
-    }
-
-    if (!movie.description.trim()) {
-      newErrors.description = "Description is required";
-    } else if (movie.description.length < 10) {
-      newErrors.description = "Description must be at least 10 characters";
-    }
-
-    if (!movie.rating) {
-      newErrors.rating = "Rating is required";
-    } else if (movie.rating < 0 || movie.rating > 10) {
-      newErrors.rating = "Rating must be between 0 and 10";
-    }
-
-    if (!movie.duration) {
-      newErrors.duration = "Duration is required";
-    } else if (movie.duration <= 0) {
-      newErrors.duration = "Duration must be greater than 0";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const submit = async () => {
-    if (!validate()) return;
+    if (!movie.title || !movie.description || movie.rating === "" || movie.duration === "") {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if(movie.rating < 0 || movie.rating > 10) {
+      toast.error("Rating must be between 0 and 10");
+      return;
+    }
 
     await addMovie(movie);
     setMovie({ title: "", description: "", rating: "", duration: "" });
@@ -76,7 +54,7 @@ export default function AddMovie() {
         value={movie.description}
         onChange={change}
         sx={{ mt: 2 }}
-         error={!!errors.description}
+        error={!!errors.description}
         helperText={errors.description}
       />
 
@@ -85,7 +63,13 @@ export default function AddMovie() {
         label="Rating"
         type="number"
         name="rating"
-        inputProps={{ min: 0, max: 10, step: 0.1 }}
+        slotProps={{
+          htmlInput: {
+            min: 0,
+            max: 10,
+            step: 0.1,
+          },
+        }}
         value={movie.rating}
         onChange={change}
         error={!!errors.rating}

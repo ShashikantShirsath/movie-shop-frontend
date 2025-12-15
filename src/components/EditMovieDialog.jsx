@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { updateMovie } from "../apis/movies";
+import toast from "react-hot-toast";
 
 export default function EditMovieDialog({
   open,
@@ -27,7 +28,16 @@ export default function EditMovieDialog({
   const change = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  if (form.rating < 0 || form.rating > 10) {
+    toast.error("Rating must be between 0 and 10" );
+    return;
+  }
+
   const submit = async () => {
+    if (!form.title || !form.description || form.rating === "" || form.duration === "") {
+      toast.error("All fields are required");
+      return;
+    }
     const updatedMovie = await updateMovie(movie._id, form);
     onUpdated(updatedMovie);
     onClose();
@@ -56,6 +66,13 @@ export default function EditMovieDialog({
             name="rating"
             type="number"
             value={form?.rating}
+            slotProps={{
+              htmlInput: {
+                min: 0,
+                max: 10,
+                step: 0.1,
+              },
+            }}
             onChange={change}
           />
           <TextField

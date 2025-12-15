@@ -24,7 +24,7 @@ export default function Navbar() {
                 }}
             >
 
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }} onClick={() => window.location.href = "/"}>
                     Movie App
                 </Typography>
 
@@ -57,7 +57,7 @@ export default function Navbar() {
                             },
                         }}
                     >
-                        Add Movie
+                        Add
                     </Button>
                     )}
 
