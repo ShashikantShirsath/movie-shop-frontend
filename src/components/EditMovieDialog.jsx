@@ -28,16 +28,17 @@ export default function EditMovieDialog({
   const change = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  if (form.rating < 0 || form.rating > 10) {
-    toast.error("Rating must be between 0 and 10" );
-    return;
-  }
-
   const submit = async () => {
     if (!form.title || !form.description || form.rating === "" || form.duration === "") {
       toast.error("All fields are required");
       return;
     }
+    
+    if (form.rating < 0 || form.rating > 10) {
+      toast.error("Rating must be between 0 and 10");
+      return;
+    }
+
     const updatedMovie = await updateMovie(movie._id, form);
     onUpdated(updatedMovie);
     onClose();
